@@ -1,0 +1,5 @@
+django
+ruff
+isort
+black
+djangorestframework
