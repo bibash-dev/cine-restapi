@@ -1,8 +1,16 @@
 from rest_framework import serializers
-from cineshelf_app.models import MediaStream, StreamPlatform
+from cineshelf_app.models import MediaStream, StreamPlatform, Review
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = "__all__"
 
 
 class MediaStreamSerializer(serializers.ModelSerializer):
+    reviews = ReviewSerializer(many=True, read_only=True)
+
     class Meta:
         model = MediaStream
         fields = "__all__"
