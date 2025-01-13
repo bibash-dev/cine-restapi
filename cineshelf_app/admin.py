@@ -1,11 +1,17 @@
 from django.contrib import admin
-from .models  import Movie
+from .models import StreamPlatform, MediaStream
 
-# admin.site.register(Movie)
 
-@admin.register(Movie)
-class MovieAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description', 'active')
-    search_fields = ('name',)
-    list_filter = ('active',)
+@admin.register(StreamPlatform)
+class StreamPlatformAdmin(admin.ModelAdmin):
+    list_display = ("name", "description", "website_url")
+    search_fields = ("name",)
+
+
+@admin.register(MediaStream)
+class MediaStreamAdmin(admin.ModelAdmin):
+    list_display = ("title", "summary", "is_active", "created_at")
+    search_fields = ("title",)
+    list_filter = ("is_active",)
+    ordering = ("-created_at",)
 
