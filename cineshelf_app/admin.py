@@ -14,4 +14,3 @@ class MediaStreamAdmin(admin.ModelAdmin):
     search_fields = ("title",)
     list_filter = ("is_active",)
     ordering = ("-created_at",)
-
