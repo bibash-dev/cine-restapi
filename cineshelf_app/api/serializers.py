@@ -19,7 +19,7 @@ class MediaStreamSerializer(serializers.ModelSerializer):
 class StreamPlatformSerializer(serializers.HyperlinkedModelSerializer):
     media_streams = MediaStreamSerializer(many=True, read_only=True)
     url = serializers.HyperlinkedIdentityField(
-        view_name="platform-detail",
+        view_name="stream-platform-detail",
     )
 
     class Meta:
