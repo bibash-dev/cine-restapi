@@ -1,6 +1,9 @@
+from django.core.checks import register
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import ValidationError
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
@@ -18,14 +21,22 @@ from cineshelf_app.models import MediaStream, StreamPlatform, Review
 class CreateReview(generics.CreateAPIView):
     serializer_class = ReviewSerializer
 
+    def get_queryset(self):
+        return Review.objects.all()
+
     def perform_create(self, serializer):
         pk = self.kwargs.get("pk")
         media_stream = MediaStream.objects.get(pk=pk)
 
-        serializer.save(media_stream=media_stream)
+        reviewer = self.request.user
+        review = Review.objects.filter(media_stream=media_stream, reviewer=reviewer)
+        if review.exists():
+            raise ValidationError("You have already submitted a review for this media!")
+        serializer.save(media_stream=media_stream, reviewer=reviewer)
 
 
 class ReviewList(generics.ListAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     # queryset = Review.objects.all()
     serializer_class = ReviewSerializer
 
@@ -35,6 +46,7 @@ class ReviewList(generics.ListAPIView):
 
 
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
 
@@ -83,7 +95,7 @@ class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
 #         return Response(serializer.data)
 
 
-class StreamPlatformVS(viewsets.ReadOnlyModelViewSet):
+class StreamPlatformVS(viewsets.ModelViewSet):
     serializer_class = StreamPlatformSerializer
     queryset = StreamPlatform.objects.all()
 

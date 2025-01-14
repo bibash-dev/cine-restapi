@@ -19,6 +19,7 @@ class MediaStreamAdmin(admin.ModelAdmin):
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
     list_display = (
+        "reviewer",
         "rating",
         "media_stream",
         "description",

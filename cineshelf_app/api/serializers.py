@@ -3,6 +3,8 @@ from cineshelf_app.models import MediaStream, StreamPlatform, Review
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    reviewer = serializers.StringRelatedField(read_only=True)
+
     class Meta:
         model = Review
         exclude = ["media_stream"]
