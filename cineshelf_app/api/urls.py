@@ -6,6 +6,7 @@ from .views import (
     MediaStreamDetailAV,
     ReviewList,
     ReviewDetail,
+    CreateReview,
 )
 
 urlpatterns = [
@@ -17,6 +18,9 @@ urlpatterns = [
     ),
     path("media_list/", MediaStreamListAV.as_view(), name="media-list"),
     path("<int:pk>/", MediaStreamDetailAV.as_view(), name="media-detail"),
-    path("reviews/", ReviewList.as_view(), name="review-list"),
-    path("reviews/<int:pk>/", ReviewDetail.as_view(), name="review-detail"),
+    # path("reviews/", ReviewList.as_view(), name="review-list"),
+    # path("reviews/<int:pk>/", ReviewDetail.as_view(), name="review-detail"),
+    path("media/<int:pk>/create-review", CreateReview.as_view(), name="create-review"),
+    path("media/<int:pk>/reviews", ReviewList.as_view(), name="review-list"),
+    path("media/reviews/<int:pk>", ReviewDetail.as_view(), name="review-detail"),
 ]
