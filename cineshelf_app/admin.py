@@ -10,7 +10,14 @@ class StreamPlatformAdmin(admin.ModelAdmin):
 
 @admin.register(MediaStream)
 class MediaStreamAdmin(admin.ModelAdmin):
-    list_display = ("title", "summary", "is_active", "created_at")
+    list_display = (
+        "title",
+        "summary",
+        "is_active",
+        "average_rating",
+        "total_ratings",
+        "created_at",
+    )
     search_fields = ("title",)
     list_filter = ("is_active",)
     ordering = ("-created_at",)

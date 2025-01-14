@@ -16,6 +16,7 @@ from cineshelf_app.api.serializers import (
     ReviewSerializer,
 )
 from cineshelf_app.models import MediaStream, StreamPlatform, Review
+from cineshelf_app.api.permissions import AdminOrReadOnly, ReviewerOrReadOnly
 
 
 class CreateReview(generics.CreateAPIView):
@@ -32,6 +33,15 @@ class CreateReview(generics.CreateAPIView):
         review = Review.objects.filter(media_stream=media_stream, reviewer=reviewer)
         if review.exists():
             raise ValidationError("You have already submitted a review for this media!")
+
+        if media_stream.total_ratings == 0:
+            media_stream.average_rating = serializer.validated_data.get("rating")
+        else:
+            media_stream.average_rating = (
+                media_stream.average_rating + serializer.validated_data.get("rating")
+            ) / 2
+        media_stream.total_ratings += 1
+        media_stream.save()
         serializer.save(media_stream=media_stream, reviewer=reviewer)
 
 
@@ -46,7 +56,7 @@ class ReviewList(generics.ListAPIView):
 
 
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [ReviewerOrReadOnly]
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
 

@@ -8,6 +8,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         exclude = ["media_stream"]
+        read_only_fields = ("created_at", "updated_at")
 
 
 class MediaStreamSerializer(serializers.ModelSerializer):
@@ -16,6 +17,7 @@ class MediaStreamSerializer(serializers.ModelSerializer):
     class Meta:
         model = MediaStream
         fields = "__all__"
+        read_only_fields = ("created_at",)
 
 
 class StreamPlatformSerializer(serializers.HyperlinkedModelSerializer):

@@ -29,7 +29,7 @@ urlpatterns = [
     path("<int:pk>/", MediaStreamDetailAV.as_view(), name="media-detail"),
     # path("reviews/", ReviewList.as_view(), name="review-list"),
     # path("reviews/<int:pk>/", ReviewDetail.as_view(), name="review-detail"),
-    path("media/<int:pk>/create-review", CreateReview.as_view(), name="create-review"),
-    path("media/<int:pk>/reviews", ReviewList.as_view(), name="review-list"),
-    path("media/reviews/<int:pk>", ReviewDetail.as_view(), name="review-detail"),
+    path("<int:pk>/create_review/", CreateReview.as_view(), name="create-review"),
+    path("<int:pk>/reviews/", ReviewList.as_view(), name="review-list"),
+    path("reviews/<int:pk>/", ReviewDetail.as_view(), name="review-detail"),
 ]
