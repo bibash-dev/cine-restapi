@@ -16,11 +16,15 @@ from cineshelf_app.api.serializers import (
     ReviewSerializer,
 )
 from cineshelf_app.models import MediaStream, StreamPlatform, Review
-from cineshelf_app.api.permissions import AdminOrReadOnly, ReviewerOrReadOnly
+from cineshelf_app.api.permissions import (
+    IsReviewerOrReadOnly,
+    IsAdminOrReadOnly,
+)
 
 
 class CreateReview(generics.CreateAPIView):
     serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Review.objects.all()
@@ -56,7 +60,7 @@ class ReviewList(generics.ListAPIView):
 
 
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [ReviewerOrReadOnly]
+    permission_classes = [IsReviewerOrReadOnly]
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
 
@@ -106,6 +110,7 @@ class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class StreamPlatformVS(viewsets.ModelViewSet):
+    permission_classes = [IsAdminOrReadOnly]
     serializer_class = StreamPlatformSerializer
     queryset = StreamPlatform.objects.all()
 
@@ -158,6 +163,7 @@ class StreamPlatformVS(viewsets.ModelViewSet):
 
 
 class MediaStreamListAV(APIView):
+    permission_classes = [IsAdminOrReadOnly]
 
     def get(self, request):
         movies = MediaStream.objects.all()
@@ -174,6 +180,7 @@ class MediaStreamListAV(APIView):
 
 
 class MediaStreamDetailAV(APIView):
+    permission_classes = [IsAdminOrReadOnly]
 
     def get(self, request, pk):
         try:

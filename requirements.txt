@@ -1,5 +1,5 @@
 django
-ruff
 isort
 black
 djangorestframework
+djangorestframework-simplejwt
