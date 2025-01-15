@@ -46,7 +46,7 @@ class CreateReview(generics.CreateAPIView):
 
 
 class ReviewList(generics.ListAPIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     # queryset = Review.objects.all()
     serializer_class = ReviewSerializer
 
