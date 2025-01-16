@@ -17,6 +17,12 @@ from rest_framework.throttling import (
     AnonRateThrottle,
     ScopedRateThrottle,
 )
+
+from cineshelf_app.api.pagination import (
+    MediaStreamPagination,
+    MediaStreamLOPagination,
+    MediaStreamCursorPagination,
+)
 from cineshelf_app.api.serializers import (
     MediaStreamSerializer,
     StreamPlatformSerializer,
@@ -192,6 +198,9 @@ class StreamPlatformVS(viewsets.ModelViewSet):
 class MediaStreamList(generics.ListAPIView):
     queryset = MediaStream.objects.all()
     serializer_class = MediaStreamSerializer
+    # pagination_class = MediaStreamPagination
+    # pagination_class = MediaStreamLOPagination
+    pagination_class = MediaStreamCursorPagination
     # filter_backends = [DjangoFilterBackend]
     # search_fields = ["title", "platform__name"]
 
