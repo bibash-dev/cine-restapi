@@ -9,10 +9,12 @@ from .views import (
     MediaStreamDetailAV,
     ReviewList,
     ReviewDetail,
+    UserReview,
     CreateReview,
     StreamPlatformVS,
+    MediaStreamList,
 )
-
+from ..models import MediaStream
 
 router = DefaultRouter()
 router.register("streams", StreamPlatformVS, basename="stream-platform")
@@ -32,4 +34,7 @@ urlpatterns = [
     path("<int:pk>/create_review/", CreateReview.as_view(), name="create-review"),
     path("<int:pk>/reviews/", ReviewList.as_view(), name="review-list"),
     path("reviews/<int:pk>/", ReviewDetail.as_view(), name="review-detail"),
+    # path("reviews/<str:username>/", UserReview.as_view(), name="user-review-detail"),
+    path("reviews/", UserReview.as_view(), name="user-review-detail"),
+    path("new_media/", MediaStreamList.as_view(), name="search-media"),
 ]

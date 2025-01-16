@@ -1,5 +1,6 @@
 from django.core.checks import register
 from django.core.exceptions import ObjectDoesNotExist
+from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 from rest_framework import status
@@ -7,9 +8,15 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
+from rest_framework import filters
 
 # from rest_framework import mixins
 from rest_framework import viewsets
+from rest_framework.throttling import (
+    UserRateThrottle,
+    AnonRateThrottle,
+    ScopedRateThrottle,
+)
 from cineshelf_app.api.serializers import (
     MediaStreamSerializer,
     StreamPlatformSerializer,
@@ -20,11 +27,26 @@ from cineshelf_app.api.permissions import (
     IsReviewerOrReadOnly,
     IsAdminOrReadOnly,
 )
+from cineshelf_app.api.throttling import CreateReviewThrottle, ReviewListThrottle
+
+
+class UserReview(generics.ListAPIView):
+    # throttle_classes = [ReviewListThrottle, AnonRateThrottle]
+    serializer_class = ReviewSerializer
+
+    # def get_queryset(self):
+    #     username = self.kwargs["username"]
+    #     return Review.objects.filter(reviewer__username=username)
+
+    def get_queryset(self):
+        username = self.request.query_params.get("username", None)
+        return Review.objects.filter(reviewer__username=username)
 
 
 class CreateReview(generics.CreateAPIView):
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticated]
+    throttle_classes = [CreateReviewThrottle]
 
     def get_queryset(self):
         return Review.objects.all()
@@ -50,9 +72,12 @@ class CreateReview(generics.CreateAPIView):
 
 
 class ReviewList(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    throttle_classes = [ReviewListThrottle, AnonRateThrottle]
     # queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["is_active", "reviewer__username"]
 
     def get_queryset(self):
         pk = self.kwargs["pk"]
@@ -61,8 +86,10 @@ class ReviewList(generics.ListAPIView):
 
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsReviewerOrReadOnly]
+    throttle_classes = [ScopedRateThrottle, AnonRateThrottle]
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+    throttle_scope = "review-detail"
 
 
 # class ReviewList(
@@ -160,6 +187,19 @@ class StreamPlatformVS(viewsets.ModelViewSet):
 #         return Response(
 #             {"msg": "stream platform is deleted"}, status=status.HTTP_204_NO_CONTENT
 #         )
+
+
+class MediaStreamList(generics.ListAPIView):
+    queryset = MediaStream.objects.all()
+    serializer_class = MediaStreamSerializer
+    # filter_backends = [DjangoFilterBackend]
+    # search_fields = ["title", "platform__name"]
+
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["title", "platform__name"]
+
+    # filter_backends = [filters.OrderingFilter]
+    # search_fields = ["average_rating"]
 
 
 class MediaStreamListAV(APIView):

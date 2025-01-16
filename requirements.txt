@@ -3,3 +3,4 @@ isort
 black
 djangorestframework
 djangorestframework-simplejwt
+django-filter
