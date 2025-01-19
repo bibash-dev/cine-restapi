@@ -148,9 +148,9 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {
         "anon": "5/day",
         "user": "10/day",
-        "create-review": "2/day",
+        "create-review": "3/day",
         "review-list": "10/day",
-        "review-detail": "2/day",
+        "review-detail": "5/day",
     },
     # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     # "PAGE_SIZE": 5,
